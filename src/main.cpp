@@ -4,46 +4,35 @@
 
 
 
+
 #include<raylib.h>
 #include<iostream>
 #include<random>
 #include "button.hpp"
+#include "ball.h"
+#include "ball.cpp"
+
+
 using namespace std;
 
 
-int round_ball_flag=0;
 
 
 
-void random_rounf(int &ballY, int &speedX_flagX , int &speedY_flagY, int &ball_speedX, int &ball_speedY, int &round_ball_flag, int &ballX ,random_device &rd,mt19937 &gen,uniform_int_distribution<int>& distrib,
-    uniform_int_distribution<int>& speedX,uniform_int_distribution<int>& speedY, uniform_int_distribution<int>& ball_speedX_random,uniform_int_distribution<int>& ball_speedY_random)  
-{
+
+
     
-    if (round_ball_flag==1 )
-    {
-        ballY=distrib(gen);
-        speedX_flagX=ball_speedX_random(gen);
-        speedY_flagY=ball_speedX_random(gen);
-        ball_speedX=7;
-        ball_speedY=7;
-        round_ball_flag=0;
-        ballX=400;
-    }
+    
     
 
-}
+
 int main()
 {
     int RectangleY=400;
     int RectangleTwoY=400;
     InitWindow(800,800,"Pong Classic");
     Color green={20,160,133,255};
-    int ballX=400;
-    int ballY;
-    int ball_speedX=7;
-    int ball_speedY=7;
-    int speedX_flagX=0;
-    int speedY_flagY=0;
+    
     int pointsHero=0;
     int pointsEnemy=0;
     int hero_goal_flag = 0;     
@@ -74,23 +63,9 @@ int main()
     button continuePauseButton {"Graphics/continue.png",{300,350},0.62};
     button restartPauseButton {"Graphics/restart.png",{300,250},0.62};
     button mainmenuButton {"Graphics/mainmenu.png",{300,350},0.62};
-    
-    random_device rd;
-    mt19937 gen(12345);
-    uniform_int_distribution<int>distrib(0,800);
-    uniform_int_distribution<int>speedX(3, 10);
-    uniform_int_distribution<int>speedY(3, 10);
-    uniform_int_distribution<int>ball_speedX_random(0,1);
-    uniform_int_distribution<int>ball_speedY_random(0,1);
-    
-    
-    
-        ballY=distrib(gen);
-        speedX_flagX=ball_speedX_random(gen);
-        speedY_flagY=ball_speedX_random(gen);
-        ball_speedX=speedX(gen);
-        ball_speedY=speedY(gen);
-        //round_ball_flag=1;
+    Ball ball;
+
+  
 
     
     
@@ -147,65 +122,48 @@ int main()
                 
                 
 
-                // 1. ДВИЖЕНИЕ ПО ГОРИЗОНТАЛИ (X)
-                if (speedX_flagX == 1)
-                {
-                    ballX += ball_speedX; // летит вправо
-                }
-                else
-                {
-                    ballX -= ball_speedX; // летит влево
-                }
+                
+                
+                ball.Move();
+                ball.BallRandomRound();
 
-                // 2. ДВИЖЕНИЕ ПО ВЕРТИКАЛИ (Y)
-                if (speedY_flagY == 1)
-                {
-                    ballY += ball_speedY; // летит вниз
-                }
-                else
-                {
-                    ballY -= ball_speedY; // летит вверх
-                }
-
-
-
-                random_rounf(ballY, speedX_flagX , speedY_flagY,ball_speedX, ball_speedY, round_ball_flag, ballX ,rd,gen,distrib,speedX,speedY, ball_speedX_random, ball_speedY_random);
 
                 
-                ballPosition={(float)ballX,(float)ballY};
+               ballPosition = {(float)ball.ballX, (float)ball.ballY};
+
                 paddle1 = {100, (float)RectangleY, 20, 80};
                 paddle2 = {600, (float)RectangleTwoY, 20, 80};
                 if (CheckCollisionCircleRec(ballPosition,10,paddle1))
                 {
-                    speedX_flagX = 1;
+                    ball.speedX_flagX = 1;
                     //ball_speedY=-ball_speedY;
                 }
 
                 if (CheckCollisionCircleRec(ballPosition,10,paddle2))
                 {
-                    speedX_flagX = 0;
+                    ball.speedX_flagX = 0;
                 // ball_speedY=-ball_speedY;
                 }
                 if (CheckCollisionCircleRec(ballPosition,10,wallUp))
                 {
                 // ball_speedX=-ball_speedX;
-                    speedY_flagY = 1;
+                    ball.speedY_flagY = 1;
                 }
                 if (CheckCollisionCircleRec(ballPosition,10,wallDown))
                 {
                 // ball_speedX=-ball_speedX;
-                    speedY_flagY = 0;
+                    ball.speedY_flagY = 0;
                 }
             // ballX += 1+ball_speedX;
                 //ballY +=1+ ball_speedY;   
                 
                 if (Enemy_Intelligence==true)
                 {
-                    if ( (RectangleTwoY+100 <800)&& (ballY>RectangleTwoY) )
+                    if ( (RectangleTwoY+100 <800)&& (ball.ballY>RectangleTwoY) )
                     {
                         RectangleTwoY+=5;
-                    }else if((RectangleTwoY>=30)&&(ballY<RectangleTwoY) ){
-                        RectangleTwoY=ballY;
+                    }else if((RectangleTwoY>=30)&&(ball.ballY<RectangleTwoY) ){
+                        RectangleTwoY=ball.ballY;
                     }
                 }
                 else if (Enemy_Intelligence==false)
@@ -228,7 +186,7 @@ int main()
                     hero_goal_flag=1;
                     
                     pointsEnemy+=1;
-                    round_ball_flag=1;
+                    ball.round_ball_flag=1;
                     if (pointsEnemy==10)
                     {
                         IsGamePaused = true;
@@ -249,7 +207,7 @@ int main()
                     enemy_goal_flag=1;
                     
                     pointsHero+=1;
-                    round_ball_flag=1; 
+                    ball.round_ball_flag=1; 
 
                     if (pointsHero==10)
                     {
@@ -274,7 +232,7 @@ int main()
 
             
             
-            DrawCircle(ballX,ballY,10,WHITE);
+            DrawCircle(ball.ballX, ball.ballY,10,WHITE);
             DrawRectangle(100,RectangleY,20,80,RED);
             DrawRectangle(600,RectangleTwoY,20,80,RED);
             DrawRectangle(0,0,800,20,RED);
@@ -304,10 +262,10 @@ int main()
                 {
                     RectangleY = 400;     
                     RectangleTwoY = 400;  
-                    ballX = 400;          
+                    ball.ballX = 400;          
                     pointsHero=0;
                     pointsEnemy=0;
-                    round_ball_flag = 1;
+                    ball.round_ball_flag = 1;
                     IsGamePaused=false;
                     
 
@@ -335,10 +293,10 @@ int main()
             {
                 RectangleY = 400;     
                 RectangleTwoY = 400;  
-                ballX = 400;          
+                ball.ballX = 400;          
                 pointsHero=0;
                 pointsEnemy=0;
-                round_ball_flag = 1;
+                ball.round_ball_flag = 1;
                 IsGameStarted = true;
                 IsGamePaused = false;
 
