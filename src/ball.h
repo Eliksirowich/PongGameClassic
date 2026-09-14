@@ -1,5 +1,5 @@
 #pragma once
-
+#include<raylib.h>
 #include<random>
 
 class Ball
@@ -47,4 +47,6 @@ class Ball
         void Move();
 
         void BallRandomRound();
+
+        void Draw();
 };

@@ -1,6 +1,7 @@
 #include "ball.h"
 #include <iostream>
 #include <string>
+#include<raylib.h>
 using namespace std;
 
 
@@ -81,6 +82,10 @@ void Ball::BallRandomRound()
     }
 }
 
+void Ball::Draw()
+{
+    DrawCircle(ballX, ballY,10,WHITE);
+}
 
 
 

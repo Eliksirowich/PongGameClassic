@@ -11,6 +11,8 @@
 #include "button.hpp"
 #include "ball.h"
 #include "ball.cpp"
+#include "paddle.h"
+#include "paddle.cpp" 
 
 
 using namespace std;
@@ -42,8 +44,7 @@ int main()
     bool IsGamePaused=false;
     Vector2 ballPosition;
     
-    Rectangle paddle1;
-    Rectangle paddle2;
+   
     Rectangle wallUp={0, (float)0, 800, 20};
     Rectangle wallDown={0, (float)780, 800, 20};
     Rectangle hero_football_goal={10, (float)20, 10, 760};
@@ -64,7 +65,8 @@ int main()
     button restartPauseButton {"Graphics/restart.png",{300,250},0.62};
     button mainmenuButton {"Graphics/mainmenu.png",{300,350},0.62};
     Ball ball;
-
+    Paddle paddle1(100);
+    Paddle paddle2(600);
   
 
     
@@ -113,12 +115,7 @@ int main()
             ClearBackground(green);
             if (IsGamePaused==false)
             {
-                    if (IsKeyDown(KEY_S)&& (RectangleY+100 <800 ) )
-                {
-                    RectangleY+=10; 
-                }else if(IsKeyDown(KEY_W)&& (RectangleY>=30 )){
-                    RectangleY-=10;
-                }
+                paddle1.MovePlayerOne();
                 
                 
 
@@ -131,15 +128,14 @@ int main()
                 
                ballPosition = {(float)ball.ballX, (float)ball.ballY};
 
-                paddle1 = {100, (float)RectangleY, 20, 80};
-                paddle2 = {600, (float)RectangleTwoY, 20, 80};
-                if (CheckCollisionCircleRec(ballPosition,10,paddle1))
+            
+                if (CheckCollisionCircleRec(ballPosition,10,{(float)paddle1.posX, (float)paddle1.RectangleY, 20, 80}))
                 {
                     ball.speedX_flagX = 1;
                     //ball_speedY=-ball_speedY;
                 }
 
-                if (CheckCollisionCircleRec(ballPosition,10,paddle2))
+                if (CheckCollisionCircleRec(ballPosition,10,{(float)paddle2.posX, (float)paddle2.RectangleY, 20, 80}))
                 {
                     ball.speedX_flagX = 0;
                 // ball_speedY=-ball_speedY;
@@ -159,21 +155,11 @@ int main()
                 
                 if (Enemy_Intelligence==true)
                 {
-                    if ( (RectangleTwoY+100 <800)&& (ball.ballY>RectangleTwoY) )
-                    {
-                        RectangleTwoY+=5;
-                    }else if((RectangleTwoY>=30)&&(ball.ballY<RectangleTwoY) ){
-                        RectangleTwoY=ball.ballY;
-                    }
+                    paddle2.MoveAI(ball.ballY);
                 }
                 else if (Enemy_Intelligence==false)
                 {
-                    if (IsKeyDown(KEY_DOWN)&& (RectangleTwoY+100 <800 ) )
-                    {
-                        RectangleTwoY+=10; 
-                    }else if(IsKeyDown(KEY_UP)&& (RectangleTwoY>=30 )){
-                        RectangleTwoY-=10;
-                    }
+                   paddle2.MovePlayerTwo();
                 }
                 
                 
@@ -232,9 +218,9 @@ int main()
 
             
             
-            DrawCircle(ball.ballX, ball.ballY,10,WHITE);
-            DrawRectangle(100,RectangleY,20,80,RED);
-            DrawRectangle(600,RectangleTwoY,20,80,RED);
+            ball.Draw();
+            paddle1.Draw();
+            paddle2.Draw();
             DrawRectangle(0,0,800,20,RED);
             DrawRectangle(0, 780, 800, 20, RED);
             DrawRectangle(395, 20, 10, 760, WHITE);
