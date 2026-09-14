@@ -9,6 +9,9 @@ public:
 
     int posX;
 
+    Paddle() {}
+
+
     Paddle(int posX);
 
     void MovePlayerOne();

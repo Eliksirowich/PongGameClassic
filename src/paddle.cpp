@@ -36,13 +36,14 @@ void Paddle::MovePlayerTwo()
 
 void Paddle::MoveAI(int ballY)
 {
-    if ( (RectangleY+100 <800)&& (ballY>RectangleY) )
+    
+    if ((RectangleY + 100 < 800) && (ballY > RectangleY + 40))
     {
-        RectangleY+=5;
+        RectangleY += 6; 
     }
-    else if((RectangleY>=30)&&(ballY<RectangleY) )
+    else if ((RectangleY >= 30) && (ballY < RectangleY + 40))
     {
-        RectangleY=ballY;
+        RectangleY -= 6; 
     }
 }
 

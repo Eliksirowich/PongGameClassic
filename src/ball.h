@@ -4,9 +4,6 @@
 
 class Ball
 {
-    
-        
-
     public:
     
         int ballX=400;
@@ -36,11 +33,6 @@ class Ball
         std::uniform_int_distribution<int> ball_speedX_random;
 
         std::uniform_int_distribution<int> ball_speedY_random;
-
-
-
-
-
 
         Ball();
 
